@@ -32,10 +32,14 @@
         
     - name: install Metallb Load Balancer
       become: yes
-      become_user: kube
+      become_user: root
       shell:
            |
-           kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+           kubecctl apply -f namespace.yaml
+           docker pull quay.io/metallb/speaker:v0.12.1
+           docker pull quay.io/metallb/controller:v0.12.1
+           docker tag quay.io/metallb/speaker:v0.12.1  metallb/speaker:v0.12.1
+           docker tag quay.io/metallb/controller:v0.12.1  controller/speaker:v0.12.1
            kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
      args:
           chdir: $HOME
