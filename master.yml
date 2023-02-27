@@ -26,10 +26,30 @@
     - name: install Pod network
       become: yes
       become_user: kube
-      shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml 
+      shell: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml 
       args:
         chdir: $HOME
         
+    - name: install Metallb Load Balancer
+      become: yes
+      become_user: kube
+      shell:
+           |
+           kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+           kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
+     args:
+          chdir: $HOME
+
+   - name: Config pool 
+     become: yes
+     become_user: kube
+     shell: 
+          |
+          kubectl apply -f config-pool.yaml
+     args:
+         chdir: $HOME
+                  
+
     - name: Get the token for joining the worker nodes
       become: yes
       become_user: kube
